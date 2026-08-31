@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Catching Up — Vida & Trabalho</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-text-size-adjust:100%; }
+  html, body { height:100%; width:100%; overflow:hidden; }
+  body { font-family:'Inter',sans-serif; background:#F4F6FB; color:#15203B; display:flex; flex-direction:column; }
+
+  /* Topbar */
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:12px 24px; background:#FFFFFF; border-bottom:1px solid #E2E7F2; flex-shrink:0; gap:18px; flex-wrap:wrap; }
+  .brand { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .brand-badge { width:32px; height:32px; border-radius:9px; background:#15203B; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12.5px; flex-shrink:0; }
+  .brand-name { font-weight:700; font-size:13.5px; color:#15203B; }
+  .lesson-title { font-size:12px; color:#6B7690; font-weight:500; }
+  .topbar-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+  .tbtn { display:flex; align-items:center; gap:7px; border-radius:9px; padding:9px 16px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; border:none; white-space:nowrap; }
+  .tbtn .ic { font-size:14px; line-height:1; }
+  .tbtn.outline { background:#FFFFFF; color:#15203B; border:1.5px solid #C7CEDD; }
+  .tbtn.outline:hover { background:#F4F6FB; }
+  .tbtn.purple { background:#4B2E83; color:#fff; }
+  .tbtn.purple:hover { background:#3e2569; }
+  .tbtn.teal { background:#178A72; color:#fff; }
+  .tbtn.teal:hover { background:#136f5c; }
+  .tbtn.navy { background:#15203B; color:#fff; }
+  .tbtn.navy:hover { background:#0e1729; }
+  .tbtn:disabled { opacity:.35; cursor:default; }
+  .slide-count { font-size:12.5px; color:#6B7690; font-weight:600; white-space:nowrap; }
+  .divider { width:1px; height:22px; background:#E2E7F2; }
+
+  /* Slides */
+  .stage { flex:1; position:relative; overflow:hidden; }
+  .slide { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:30px 28px 40px; opacity:0; pointer-events:none; transition:opacity .3s ease; overflow-y:auto; }
+  .slide.title-slide { justify-content:center; }
+  .slide.active { opacity:1; pointer-events:auto; }
+  .slide-inner { width:100%; max-width:720px; }
+
+  .kicker { display:inline-block; background:#F4F6FB; border:1px solid #E2E7F2; border-radius:100px; padding:4px 12px; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#6B7690; font-weight:700; margin-bottom:14px; }
+  h1 { font-size:24px; font-weight:800; margin-bottom:8px; }
+
+  /* Title slide */
+  .title-slide { text-align:center; }
+  .title-slide .sub { font-size:14px; color:#6B7690; margin-top:8px; max-width:440px; margin-left:auto; margin-right:auto; line-height:1.6; }
+  .mission-tag { display:inline-block; margin-top:18px; background:#EAFBF3; border:1px solid #bfe9d6; color:#0f7a4c; font-size:12.5px; font-weight:600; padding:9px 16px; border-radius:10px; max-width:440px; line-height:1.5; }
+
+  /* Activity header bar */
+  .activity-bar { width:100%; background:#178A72; border-radius:14px; padding:20px 28px; text-align:center; margin-bottom:24px; }
+  .activity-bar h2 { color:#fff; font-size:21px; font-weight:800; margin-bottom:4px; }
+  .activity-bar p { color:#DFF6EE; font-size:13.5px; font-weight:500; }
+
+  /* Vocab / Grammar / Teacher's guide lists (overlay panels) */
+  .vocab-grid { display:flex; flex-direction:column; gap:10px; }
+  .vocab-item { display:flex; align-items:baseline; gap:12px; background:#FFFFFF; border:1px solid #E2E7F2; border-radius:10px; padding:12px 16px; }
+  .vocab-en { font-weight:700; font-size:14px; color:#15203B; min-width:170px; }
+  .vocab-pt { font-size:12.5px; color:#6B7690; }
+
+  .guide-step { display:flex; gap:12px; background:#FFFFFF; border:1px solid #E2E7F2; border-radius:10px; padding:12px 16px; margin-bottom:10px; }
+  .guide-time { font-weight:700; font-size:12.5px; color:#178A72; min-width:64px; flex-shrink:0; }
+  .guide-text { font-size:13px; color:#333c4f; line-height:1.55; }
+
+  /* Warm-up carousel */
+  .carousel-box { background:#FFFFFF; border:1px solid #E2E7F2; border-radius:16px; padding:40px 44px; width:100%; text-align:center; }
+  .carousel-q { font-size:26px; font-weight:800; color:#15203B; line-height:1.4; margin-bottom:22px; }
+  .carousel-fu { font-size:16px; color:#6B7690; line-height:1.5; font-style:italic; }
+  .carousel-nav { display:flex; justify-content:center; align-items:center; gap:18px; margin-top:32px; }
+  .carousel-btn { background:#15203B; color:#fff; border:none; border-radius:9px; padding:10px 26px; font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .carousel-btn.ghost { background:#FFFFFF; color:#15203B; border:1.5px solid #C7CEDD; }
+  .carousel-progress { font-size:12.5px; color:#9aa3b8; font-weight:600; }
+
+  /* Roleplay */
+  .roleplay-box { background:#FFFFFF; border:1px solid #E2E7F2; border-radius:14px; padding:22px 26px; width:100%; }
+  .roleplay-desc { font-size:13.5px; color:#333c4f; line-height:1.6; }
+  ol.beats { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  ol.beats li { border-left:3px solid #178A72; padding:3px 0 3px 14px; font-size:13.5px; color:#15203B; line-height:1.5; }
+  .roles { display:flex; gap:10px; margin-bottom:14px; }
+  .role { background:#F4F6FB; border:1px solid #E2E7F2; border-radius:100px; padding:5px 14px; font-size:12px; font-weight:600; color:#15203B; }
+
+  /* Overlay panels */
+  .overlay { position:fixed; inset:0; background:rgba(21,32,59,.45); display:none; align-items:center; justify-content:center; z-index:50; padding:24px; }
+  .overlay.open { display:flex; }
+  .overlay-panel { background:#FFFFFF; border-radius:16px; max-width:540px; width:100%; max-height:80vh; overflow-y:auto; padding:26px 28px; }
+  .overlay-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .overlay-head h2 { margin-bottom:0; font-size:18px; }
+  .overlay-close { background:#F4F6FB; border:1px solid #E2E7F2; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; color:#6B7690; flex-shrink:0; }
+  .overlay-sub { font-size:12.5px; color:#6B7690; margin-bottom:16px; line-height:1.5; }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-badge">RW</div>
+      <div>
+        <div class="brand-name">Catching Up — Vida &amp; Trabalho</div>
+        <div class="lesson-title">Bruno · Aula de hoje</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="tbtn ghost outline" id="prevBtn"><span class="ic">←</span></button>
+      <button class="tbtn outline" id="openGuide"><span class="ic">💡</span>Teacher's Guide</button>
+      <button class="tbtn purple" id="openVocab"><span class="ic">📖</span>Vocabulary</button>
+      <button class="tbtn teal" id="openGrammar"><span class="ic">📘</span>Grammar</button>
+      <div class="divider"></div>
+      <span class="slide-count" id="stepLabel">Slide 1 of 3</span>
+      <button class="tbtn navy" id="nextBtn">Next<span class="ic">→</span></button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <div class="slide active title-slide">
+      <div class="slide-inner">
+        <div class="kicker">Conversação · B1</div>
+        <h1>Catching Up — Vida &amp; Trabalho</h1>
+        <p class="sub">Hoje o papo é sobre reencontrar um amigo, colocar a vida em dia e desabafar sobre o trabalho — do jeito que rola naturalmente entre amigos num bar.</p>
+        <div class="mission-tag">🎯 Sua missão: usar os chunks de Grammar durante toda a conversa de hoje — pelo menos um em cada resposta.</div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-inner">
+        <div class="activity-bar">
+          <h2>Warm Up</h2>
+          <p>Let's chat! Answer naturally.</p>
+        </div>
+        <div class="carousel-box">
+          <div class="carousel-q" id="qMain"></div>
+          <div class="carousel-fu" id="qFollow"></div>
+          <div class="carousel-nav">
+            <button class="carousel-btn ghost" id="qPrev">←</button>
+            <span class="carousel-progress" id="qProgress"></span>
+            <button class="carousel-btn" id="qNext">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide">
+      <div class="slide-inner">
+        <div class="activity-bar">
+          <h2>Roleplay</h2>
+          <p>Friends at a bar — act it out!</p>
+        </div>
+        <div class="roleplay-box">
+          <div class="roles"><span class="role">You: yourself</span><span class="role">Me: your friend</span></div>
+          <div class="roleplay-desc">Cena: vocês se encontram num bar depois do trabalho, faz tempo que não se veem. É hora de colocar o papo em dia — vida, trabalho, planos.</div>
+          <ol class="beats">
+            <li>1. Cumprimente e comente que faz tempo que não se veem</li>
+            <li>2. Pergunte como a vida e o trabalho têm estado</li>
+            <li>3. Desabafe sobre algo do trabalho (um prazo, um projeto, o chefe)</li>
+            <li>4. Pergunte sobre os planos (fim de semana, férias)</li>
+            <li>5. Combine de se ver de novo antes de encerrar</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Teacher's Guide overlay -->
+  <div class="overlay" id="guideOverlay">
+    <div class="overlay-panel">
+      <div class="overlay-head"><h2>💡 Teacher's Guide</h2><div class="overlay-close" data-close="guideOverlay">✕</div></div>
+      <div class="overlay-sub">Condução da aula (~1h) — só pra você, não mostrar pro aluno.</div>
+      <div class="guide-step"><div class="guide-time">5 min</div><div class="guide-text"><b>Abertura:</b> apresente a missão (chunks de Grammar) e o tema do dia.</div></div>
+      <div class="guide-step"><div class="guide-time">15-20 min</div><div class="guide-text"><b>Warm Up:</b> puxe as perguntas do carrossel, deixe ele elaborar as respostas. Não corrija no meio da fala — só entre uma pergunta e outra, e só os erros recorrentes.</div></div>
+      <div class="guide-step"><div class="guide-time">20-25 min</div><div class="guide-text"><b>Roleplay:</b> deixe ele levar a cena, sem script fixo. Só intervenha se ele travar de verdade. Reforce o uso dos chunks de Grammar.</div></div>
+      <div class="guide-step"><div class="guide-time">5 min</div><div class="guide-text"><b>Fechamento:</b> 2-3 pontos de destaque, reforçando o que ele mandou bem — fechar com confiança, não com lista de erros.</div></div>
+    </div>
+  </div>
+
+  <!-- Grammar overlay -->
+  <div class="overlay" id="grammarOverlay">
+    <div class="overlay-panel">
+      <div class="overlay-head"><h2>📘 Grammar — fale natural</h2><div class="overlay-close" data-close="grammarOverlay">✕</div></div>
+      <div class="overlay-sub">Chunks que não têm tradução exata — te dão um tempinho pra pensar e deixam a fala mais natural.</div>
+      <div class="vocab-grid">
+        <div class="vocab-item"><span class="vocab-en">Let me think...</span><span class="vocab-pt">deixa eu pensar...</span></div>
+        <div class="vocab-item"><span class="vocab-en">Well...</span><span class="vocab-pt">bem... / então...</span></div>
+        <div class="vocab-item"><span class="vocab-en">You know...</span><span class="vocab-pt">sabe... / entende...</span></div>
+        <div class="vocab-item"><span class="vocab-en">I mean...</span><span class="vocab-pt">quer dizer...</span></div>
+        <div class="vocab-item"><span class="vocab-en">Actually...</span><span class="vocab-pt">na verdade...</span></div>
+        <div class="vocab-item"><span class="vocab-en">To be honest...</span><span class="vocab-pt">sinceramente...</span></div>
+        <div class="vocab-item"><span class="vocab-en">I guess...</span><span class="vocab-pt">eu acho...</span></div>
+        <div class="vocab-item"><span class="vocab-en">How can I put this...</span><span class="vocab-pt">como eu posso dizer isso...</span></div>
+        <div class="vocab-item"><span class="vocab-en">Kind of / sort of</span><span class="vocab-pt">meio que...</span></div>
+        <div class="vocab-item"><span class="vocab-en">That's a good question...</span><span class="vocab-pt">boa pergunta...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vocabulary overlay -->
+  <div class="overlay" id="vocabOverlay">
+    <div class="overlay-panel">
+      <div class="overlay-head"><h2>📖 Vocabulary do dia</h2><div class="overlay-close" data-close="vocabOverlay">✕</div></div>
+      <div class="overlay-sub">Vocabulário do dia a dia pra usar no aquecimento e no roleplay.</div>
+      <div class="vocab-grid">
+        <div class="vocab-item"><span class="vocab-en">catch up</span><span class="vocab-pt">colocar o papo em dia</span></div>
+        <div class="vocab-item"><span class="vocab-en">get by</span><span class="vocab-pt">ir levando, se virar</span></div>
+        <div class="vocab-item"><span class="vocab-en">burnt out</span><span class="vocab-pt">exausto, esgotado</span></div>
+        <div class="vocab-item"><span class="vocab-en">switch off</span><span class="vocab-pt">desligar a cabeça</span></div>
+        <div class="vocab-item"><span class="vocab-en">deal with</span><span class="vocab-pt">lidar com (algo)</span></div>
+        <div class="vocab-item"><span class="vocab-en">swamped</span><span class="vocab-pt">atolado de trabalho</span></div>
+        <div class="vocab-item"><span class="vocab-en">unwind</span><span class="vocab-pt">relaxar, espairecer</span></div>
+        <div class="vocab-item"><span class="vocab-en">vent</span><span class="vocab-pt">desabafar</span></div>
+        <div class="vocab-item"><span class="vocab-en">figure (something) out</span><span class="vocab-pt">resolver, descobrir como fazer</span></div>
+        <div class="vocab-item"><span class="vocab-en">get on well with</span><span class="vocab-pt">se dar bem com</span></div>
+        <div class="vocab-item"><span class="vocab-en">hang out</span><span class="vocab-pt">sair, passar tempo com alguém</span></div>
+        <div class="vocab-item"><span class="vocab-en">would rather</span><span class="vocab-pt">preferir (fazer algo)</span></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ---- Slide navigation ----
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    document.getElementById('stepLabel').textContent = 'Slide ' + (current + 1) + ' of ' + total;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+  }
+  document.getElementById('nextBtn').addEventListener('click', () => { if (current < total - 1) { current++; render(); } });
+  document.getElementById('prevBtn').addEventListener('click', () => { if (current > 0) { current--; render(); } });
+  document.addEventListener('keydown', (e) => {
+    if (document.querySelector('.overlay.open')) return;
+    if (e.key === 'ArrowRight') document.getElementById('nextBtn').click();
+    if (e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
+  });
+  render();
+
+  // ---- Overlays ----
+  document.getElementById('openGuide').addEventListener('click', () => document.getElementById('guideOverlay').classList.add('open'));
+  document.getElementById('openGrammar').addEventListener('click', () => document.getElementById('grammarOverlay').classList.add('open'));
+  document.getElementById('openVocab').addEventListener('click', () => document.getElementById('vocabOverlay').classList.add('open'));
+  document.querySelectorAll('.overlay-close').forEach(btn => {
+    btn.addEventListener('click', () => document.getElementById(btn.dataset.close).classList.remove('open'));
+  });
+  document.querySelectorAll('.overlay').forEach(ov => {
+    ov.addEventListener('click', (e) => { if (e.target === ov) ov.classList.remove('open'); });
+  });
+
+  // ---- Warm-up carousel (30 questions + follow-ups, mixing simple daily Qs with B1 grammar) ----
+  const questions = [
+    ["How's it going?", "What have you been up to?"],
+    ["What's new with you?", "Anything exciting happening?"],
+    ["Have you been busy lately?", "With work or something else?"],
+    ["What do you usually do after work?", "Do you enjoy it?"],
+    ["Do you get on well with your colleagues?", "Do you hang out outside of work too?"],
+    ["Have you ever had a really stressful week at work?", "How did you get through it?"],
+    ["What's the best thing that happened to you this week?", "Did you celebrate?"],
+    ["If you could change one thing about your job, what would it be?", "Why that specifically?"],
+    ["What do you like most about your work?", "And what do you like the least?"],
+    ["Would you rather work from home or at the office?", "Why do you prefer that?"],
+    ["What's your favorite way to spend a weekend?", "Do you get to do that often?"],
+    ["Have you traveled anywhere interesting recently?", "What was the best part?"],
+    ["Who do you usually hang out with after work?", "What do you usually do together?"],
+    ["What's something you're looking forward to?", "When is it happening?"],
+    ["Do you think you work too much?", "What would you change about it?"],
+    ["If you had more free time, what would you do with it?", "Is there anything stopping you right now?"],
+    ["What do you do to relax after a long day?", "Does it actually work?"],
+    ["Have you made any new friends recently?", "How did you meet them?"],
+    ["What's the hardest part of your job right now?", "How are you dealing with it?"],
+    ["Would you ever consider changing careers?", "What would you do instead?"],
+    ["What time do you usually finish work?", "Is that too late for you?"],
+    ["Do you prefer working alone or in a team?", "Why is that?"],
+    ["What's something that always makes you laugh?", "Who usually makes you laugh the most?"],
+    ["Have you been sleeping well lately?", "What's keeping you up?"],
+    ["What's a typical day like for you?", "Does it ever get repetitive?"],
+    ["If you won the lottery, would you still work?", "What would you do instead?"],
+    ["What do you usually talk about with your friends?", "Do you ever talk about work?"],
+    ["Have you had time for your hobbies lately?", "What's your favorite hobby?"],
+    ["What's something you're proud of this year?", "What made it special?"],
+    ["If you could take a break right now, where would you go?", "Who would you take with you?"]
+  ];
+  let qIndex = 0;
+  function renderQ() {
+    document.getElementById('qMain').textContent = questions[qIndex][0];
+    document.getElementById('qFollow').textContent = questions[qIndex][1];
+    document.getElementById('qProgress').textContent = (qIndex + 1) + ' / ' + questions.length;
+    document.getElementById('qPrev').disabled = qIndex === 0;
+    document.getElementById('qNext').textContent = qIndex === questions.length - 1 ? '↺' : 'Next →';
+  }
+  document.getElementById('qNext').addEventListener('click', () => {
+    qIndex = qIndex === questions.length - 1 ? 0 : qIndex + 1;
+    renderQ();
+  });
+  document.getElementById('qPrev').addEventListener('click', () => { if (qIndex > 0) { qIndex--; renderQ(); } });
+  renderQ();
+</script>
+
+</body>
+</html>
