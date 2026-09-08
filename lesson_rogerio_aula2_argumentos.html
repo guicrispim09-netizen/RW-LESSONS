@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Team Meeting | Realway Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6FB; --card:#FFFFFF; --line:#E2E7F2; --ink:#15203B;
+    --muted:#6B7690; --green:#1FAE73; --gold:#C98A0A; --red:#D8453A;
+    --purple:#4B2E83; --teal:#178A72; --blue:#2E5AAC;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{ height:100%; }
+  body{
+    font-family:'Inter', sans-serif; background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;
+  }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px; background:var(--card); border-bottom:1px solid var(--line);
+    flex-wrap:wrap; gap:10px;
+  }
+  .brand{display:flex; align-items:center; gap:9px;}
+  .brand .mark{ width:32px;height:32px;border-radius:9px;background:var(--ink); display:flex;align-items:center;justify-content:center; color:#fff;font-weight:800;font-size:12px; flex-shrink:0; }
+  .brand .name{font-weight:800; font-size:13px; letter-spacing:0.3px; line-height:1.1;}
+  .brand .name span{display:block; font-size:8.5px; font-weight:600; color:var(--muted); letter-spacing:1.4px; text-transform:uppercase;}
+
+  .tb-actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .tb-btn{
+    font-family:'Inter', sans-serif; font-weight:700; font-size:12.5px; cursor:pointer;
+    border:none; padding:9px 14px; border-radius:9px; display:inline-flex; align-items:center; gap:6px;
+    transition:opacity .15s;
+  }
+  .tb-btn:hover{ opacity:0.88; }
+  .tb-btn:disabled{ opacity:0.3; cursor:default; }
+  .tb-btn.outline{ background:#fff; border:1.5px solid var(--ink); color:var(--ink); }
+  .tb-btn.purple{ background:var(--purple); color:#fff; }
+  .tb-btn.teal{ background:var(--teal); color:#fff; }
+  .tb-btn.navy{ background:var(--ink); color:#fff; }
+  .tb-counter{ font-size:12px; color:var(--muted); font-weight:600; padding:0 4px; white-space:nowrap; }
+
+  .stage{ flex:1; position:relative; overflow-y:auto; }
+  .slide{
+    position:absolute; inset:0; display:none; flex-direction:column;
+    max-width:1080px; margin:0 auto; overflow-y:auto;
+  }
+  .slide.on{ display:flex; }
+  .slide-body{ padding:36px 32px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+
+  .header-bar{
+    background:var(--teal); color:#fff; padding:20px 32px; flex-shrink:0;
+  }
+  .header-bar h2{ font-size:19px; font-weight:800; }
+  .header-bar p{ font-size:12.5px; color:rgba(255,255,255,0.85); margin-top:4px; }
+
+  /* Title slide (cover) */
+  h1{font-size:30px; font-weight:800; letter-spacing:-0.6px; line-height:1.2;}
+  .cover-body{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:60px 32px;
+  }
+  .cover-title{
+    font-size:64px; font-weight:900; letter-spacing:-1px; line-height:1.1; color:var(--ink);
+  }
+  .cover-sub{ font-size:15px; color:var(--muted); font-weight:600; margin-top:14px; max-width:520px; }
+  .mission-tag{
+    display:inline-block; margin-top:22px; background:#EAFBF3; border:1px solid #bfe9d6; color:#0f7a4c;
+    font-size:13px; font-weight:600; padding:11px 20px; border-radius:10px; max-width:480px; line-height:1.6;
+  }
+  @media (max-width:640px){ .cover-title{ font-size:38px; } }
+
+  /* ===== Roleplay (Bruno pattern: scene + beats, no script) ===== */
+  .rp-wrap{ padding:28px 32px; flex:1; display:flex; flex-direction:column; justify-content:center; }
+  .rp-card{
+    background:var(--card); border:1px solid var(--line); border-radius:20px; padding:36px 40px;
+  }
+  .rp-tag{ font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:var(--teal); margin-bottom:14px; }
+  .rp-roles{ display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+  .rp-role{ background:var(--bg); border:1px solid var(--line); border-radius:100px; padding:6px 14px; font-size:12.5px; font-weight:600; color:var(--ink); }
+  .rp-scene{ font-size:16px; line-height:1.7; color:#333c4f; margin-bottom:20px; }
+  ol.rp-beats{ list-style:none; display:flex; flex-direction:column; gap:12px; }
+  ol.rp-beats li{ border-left:3px solid var(--teal); padding:2px 0 2px 16px; font-size:14.5px; color:var(--ink); line-height:1.55; }
+
+  .cnav{ display:flex; align-items:center; justify-content:center; gap:20px; margin-top:28px; }
+  .cnav button{
+    font-family:'Inter', sans-serif; font-weight:700; font-size:15px; cursor:pointer;
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    padding:12px 24px; border-radius:100px;
+  }
+  .cnav button:hover{ background:var(--bg); }
+  .cnav .ccounter{ font-size:14px; color:var(--muted); font-weight:700; min-width:64px; text-align:center; }
+
+  /* ===== Let's Talk ===== */
+  .lt-wrap{ flex:1; display:flex; flex-direction:column; }
+  .lt-body{ flex:1; display:flex; gap:24px; padding:28px 32px; align-items:stretch; }
+  .lt-qbox{
+    flex:1; background:var(--bg); border-radius:20px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:40px; gap:26px;
+  }
+  .lt-q{ font-size:26px; font-weight:800; color:var(--ink); line-height:1.45; max-width:600px; }
+  .lt-shuffle{
+    font-family:'Inter', sans-serif; font-weight:700; font-size:14px; cursor:pointer;
+    border:none; background:var(--ink); color:#fff;
+    padding:14px 26px; border-radius:100px;
+  }
+  .lt-shuffle:hover{ opacity:.88; }
+  .lt-side-pane{
+    width:260px; flex-shrink:0; border-radius:20px; background:linear-gradient(135deg,#EAF0FB,#F4F6FB);
+    border:1px solid var(--line);
+  }
+
+  /* Overlays */
+  .overlay{
+    position:fixed; inset:0; background:rgba(21,32,59,0.55); display:none; align-items:center; justify-content:center;
+    padding:24px; z-index:100;
+  }
+  .overlay.on{ display:flex; }
+  .panel{
+    background:#fff; border-radius:20px; max-width:1000px; width:100%; max-height:92vh; overflow-y:auto;
+    padding:0;
+  }
+  .panel-head{
+    display:flex; align-items:center; justify-content:space-between; padding:26px 32px;
+    border-bottom:1px solid var(--line); position:sticky; top:0; background:#fff; border-radius:20px 20px 0 0;
+  }
+  .panel-head h3{ font-size:24px; font-weight:800; }
+  .panel-close{ width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:#fff; cursor:pointer; font-size:18px; color:var(--muted); }
+  .panel-close:hover{ background:var(--bg); }
+  .panel-body{ padding:32px; }
+
+  .gm-table{ width:100%; border-collapse:collapse; }
+  .gm-table th{ background:var(--ink); color:#fff; font-size:14px; text-align:left; padding:16px 18px; }
+  .gm-table th:first-child{ border-radius:8px 0 0 0; }
+  .gm-table th:last-child{ border-radius:0 8px 0 0; }
+  .gm-table td{ font-size:15px; padding:18px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.6; }
+  .gm-table tr:nth-child(even) td{ background:var(--bg); }
+  .gm-table .markers{ color:var(--purple); font-weight:700; }
+  .gm-table .pt{ color:var(--muted); font-style:italic; font-size:14px; }
+
+  .vocab-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .vocab-card{
+    background:var(--bg); border:1px solid var(--line); border-radius:14px; padding:22px 20px;
+    cursor:pointer; transition:.15s; text-align:center;
+  }
+  .vocab-card:hover{ border-color:var(--purple); background:#F2ECFB; }
+  .vocab-card.open{ border-color:var(--green); background:#EAF8F1; }
+  .vocab-card .term{ font-size:18px; font-weight:800; color:var(--purple); }
+  .vocab-card .pt-reveal{ font-size:14px; color:var(--green); font-weight:700; margin-top:10px; min-height:1px; }
+  @media (max-width:640px){ .vocab-grid{ grid-template-columns:1fr 1fr; } }
+
+  .tg-block{ margin-bottom:16px; }
+  .tg-block .time{ display:inline-block; font-size:10.5px; font-weight:800; color:var(--teal); background:rgba(23,138,114,0.1); padding:4px 10px; border-radius:100px; margin-bottom:6px; }
+  .tg-block h4{ font-size:14px; font-weight:800; margin-bottom:4px; }
+  .tg-block p{ font-size:12.5px; color:var(--muted); line-height:1.6; }
+  .tg-note{ background:#EAF0FB; border-left:3px solid var(--blue); border-radius:6px; padding:12px 16px; font-size:12.5px; color:#1e3a6e; margin-top:18px; line-height:1.65; }
+
+  @media (max-width:640px){
+    .slide-body{padding:24px 20px;} h1{font-size:23px;} .lt-body{flex-direction:column;}
+    .vocab-grid{grid-template-columns:1fr;} .tb-btn span.lbl-text{display:none;}
+    .lt-side-pane{width:100%; height:100px;} .rp-card{padding:24px 22px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">RW</div>
+      <div class="name">REALWAY<span>Academy</span></div>
+    </div>
+    <div class="tb-actions">
+      <button class="tb-btn outline" id="prevBtn">←</button>
+      <button class="tb-btn outline" id="guideBtn"><span class="lbl-text">Teacher's Guide</span></button>
+      <button class="tb-btn purple" id="chunksBtn"><span class="lbl-text">Chunks</span></button>
+      <button class="tb-btn teal" id="modalsBtn"><span class="lbl-text">Modals</span></button>
+      <span class="tb-counter" id="slideCounter">Slide 1 of 3</span>
+      <button class="tb-btn navy" id="nextBtn">Next →</button>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <!-- SLIDE 1: TITLE (cover) -->
+    <div class="slide on">
+      <div class="cover-body">
+        <h1 class="cover-title">The Team Meeting</h1>
+        <div class="cover-sub">Lesson 2 · Week 2 · Bringing modals, opinions, and results into a real meeting</div>
+        <div class="mission-tag">Your mission: use May / Might naturally, and bring in at least one chunk from today's list — one per answer, no forcing it.</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: LET'S TALK (aquecimento) -->
+    <div class="slide">
+      <div class="header-bar">
+        <h2>Let's Talk</h2>
+        <p>Warm-up — free conversation to get you talking. Click "Shuffle question" to move to the next one</p>
+      </div>
+      <div class="lt-body">
+        <div class="lt-qbox">
+          <div class="lt-q" id="ltQ">What is your name?</div>
+          <button class="lt-shuffle" id="ltShuffle">Shuffle question</button>
+        </div>
+        <div class="lt-side-pane"></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: ROLEPLAY (scene + beats, no script — Mima participa) -->
+    <div class="slide">
+      <div class="header-bar">
+        <h2>Roleplay</h2>
+        <p>Live the scene with Mima. No script — just follow the beats naturally, and bring in May/Might plus this week's chunks when they fit</p>
+      </div>
+      <div class="rp-wrap">
+        <div class="rp-card">
+          <div class="rp-tag" id="rpTag">Scene 1 of 4</div>
+          <div class="rp-roles" id="rpRoles"></div>
+          <div class="rp-scene" id="rpScene"></div>
+          <ol class="rp-beats" id="rpBeats"></ol>
+        </div>
+        <div class="cnav">
+          <button id="rpPrev">← Previous</button>
+          <span class="ccounter" id="rpCounter">1 / 4</span>
+          <button id="rpNext">Next →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CHUNKS OVERLAY -->
+  <div class="overlay" id="chunksOverlay">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Chunks de argumentação e resultado</h3>
+        <button class="panel-close" data-close="chunksOverlay">×</button>
+      </div>
+      <div class="panel-body">
+        <table class="gm-table">
+          <tr><th>Chunk</th><th>Significado</th><th>Exemplo</th></tr>
+          <tr><td class="markers">I believe we should...</td><td class="pt">Acredito que devemos...</td><td>I believe we should try a different approach this time.</td></tr>
+          <tr><td class="markers">We need to consider...</td><td class="pt">Precisamos considerar...</td><td>We need to consider the cost before deciding.</td></tr>
+          <tr><td class="markers">The main challenge is...</td><td class="pt">O principal desafio é...</td><td>The main challenge is finding enough time.</td></tr>
+          <tr><td class="markers">The results show that...</td><td class="pt">Os resultados mostram que...</td><td>The results show that the new routine is working.</td></tr>
+        </table>
+        <div style="margin-top:16px; font-size:12.5px; color:var(--muted); line-height:1.7;">
+          <p>"I believe we should" e "The results show that" já fazem parte dos chunks-chave do Rogério; "We need to consider" e "The main challenge is" entram agora pra completar o repertório de argumentação da semana. Não precisa decorar nem encaixar todos — a ideia é ele ir puxando os que fizerem sentido, naturalmente, ao longo do roleplay.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS OVERLAY -->
+  <div class="overlay" id="modalsOverlay">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>May & Might — quick reference</h3>
+        <button class="panel-close" data-close="modalsOverlay">×</button>
+      </div>
+      <div class="panel-body">
+        <p style="font-size:12.5px; color:var(--muted); margin-bottom:16px; line-height:1.6;">Same grammar he already saw in the recorded Modal Verbs lesson. Use this if he gets stuck during the roleplay — the goal is for him to produce it on his own first.</p>
+        <table class="gm-table">
+          <tr><th>Use</th><th>Example</th></tr>
+          <tr><td class="markers">Might — a possibility you're not sure about</td><td>This might explain the drop in engagement.</td></tr>
+          <tr><td class="markers">May — a possibility, slightly more likely</td><td>The new policy may reduce turnover.</td></tr>
+          <tr><td class="markers">Might not / May not — negative possibility</td><td>The results may not be ready until Friday.</td></tr>
+          <tr><td class="markers">May I...? — asking permission formally</td><td>May I ask a follow-up question?</td></tr>
+          <tr><td class="markers">May I suggest...? — a polite suggestion</td><td>May I suggest a different approach?</td></tr>
+          <tr><td class="markers">You may... — giving formal permission</td><td>You may go ahead and share your results first.</td></tr>
+        </table>
+        <div class="tg-note">Quick reminder — Question Words: keep questions in the meeting clear and direct. "What's causing the delay?" · "Why did the numbers change?" · "How can we fix this?" · "Who's responsible for the next step?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEACHER'S GUIDE OVERLAY -->
+  <div class="overlay" id="guideOverlay">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Teacher's Guide</h3>
+        <button class="panel-close" data-close="guideOverlay">×</button>
+      </div>
+      <div class="panel-body">
+        <div class="tg-block">
+          <span class="time">0-5 min · Abertura</span>
+          <h4>Contexto da aula</h4>
+          <p>Retome que ele assistiu a aula de Modal Verbs (May/Might) e fez a tarefa do áudio "A Meeting About the Team". Hoje a conversa gira em torno de uma reunião de equipe, unindo isso com os chunks de argumentação da semana 2.</p>
+        </div>
+        <div class="tg-block">
+          <span class="time">5-15 min · Let's Talk</span>
+          <h4>Aquecimento com perguntas abertas</h4>
+          <p>Perguntas abertas e gerais, sorteando com o botão de sortear, só pra soltar a língua antes do roleplay. Sem pressa e sem cobrar os chunks ou o May/Might aqui ainda — é só aquecimento.</p>
+        </div>
+        <div class="tg-block">
+          <span class="time">15-55 min · Roleplay</span>
+          <h4>4 cenas, você (Mima) participando</h4>
+          <p>Cada cena traz um contexto de reunião de equipe e uma lista de pontos que a conversa deve naturalmente passar — não é um script, e nenhuma frase pronta é mostrada pra ele. Você entra na cena no papel indicado (colega, gerente) e conduz a conversa de verdade, na ordem que fizer sentido. Deixa ele levar a cena; só intervenha se ele travar de fato. Não corrija no meio — só entre uma cena e outra. O objetivo é forçar ele a produzir o May/Might e os chunks sozinho, porque a conversa pede, não porque foi mostrado.</p>
+        </div>
+        <div class="tg-note">A ideia da aula inteira é enraizar May/Might (possibilidade e pedido formal) e os chunks de argumentação numa conversa real de reunião — quando ele precisar deles no trabalho, vai saber usar naturalmente. Se ele travar num momento de possibilidade ou pedido formal, dê espaço primeiro; se realmente não sair, aponte a estrutura sem entregar a frase pronta. O botão <strong>Modals</strong> traz a referência rápida de May/Might (e um lembrete de Question Words, que também apareceu como ponto de atenção na plataforma) pra consulta durante a aula.</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== Main slide deck =====
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+  function goSlide(i){
+    if(i < 0 || i >= slides.length) return;
+    slides[current].classList.remove('on');
+    current = i;
+    slides[current].classList.add('on');
+    document.getElementById('slideCounter').textContent = 'Slide ' + (current+1) + ' of ' + slides.length;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').textContent = current === slides.length-1 ? 'End' : 'Next →';
+  }
+  document.getElementById('prevBtn').addEventListener('click', () => goSlide(current-1));
+  document.getElementById('nextBtn').addEventListener('click', () => { if(current < slides.length-1) goSlide(current+1); });
+  goSlide(0);
+
+  // ===== Overlays =====
+  function openOverlay(id){ document.getElementById(id).classList.add('on'); }
+  function closeOverlay(id){ document.getElementById(id).classList.remove('on'); }
+  document.getElementById('chunksBtn').addEventListener('click', () => openOverlay('chunksOverlay'));
+  document.getElementById('modalsBtn').addEventListener('click', () => openOverlay('modalsOverlay'));
+  document.getElementById('guideBtn').addEventListener('click', () => openOverlay('guideOverlay'));
+  document.querySelectorAll('.panel-close').forEach(btn => {
+    btn.addEventListener('click', () => closeOverlay(btn.dataset.close));
+  });
+  document.querySelectorAll('.overlay').forEach(ov => {
+    ov.addEventListener('click', (e) => { if(e.target === ov) ov.classList.remove('on'); });
+  });
+
+  // ===== Let's Talk — open conversation, general and everyday =====
+  const ltQuestions = [
+    'What do you think might happen in your industry over the next five years?',
+    'Is there anything in your routine that might need to change soon?',
+    "If you had to guess, what might be causing the biggest challenge on your team right now?",
+    "What's one decision you're still not sure about? What might you do next?",
+    'Tell me about a time you had to defend your opinion in a group.',
+    'What result are you most proud of this year?',
+    'If someone disagreed with your idea, what would you do?',
+    "What's the biggest challenge you're facing this month?",
+  ];
+  let ltLast = -1;
+  function renderLt(){
+    let idx;
+    do { idx = Math.floor(Math.random()*ltQuestions.length); } while(idx === ltLast && ltQuestions.length > 1);
+    ltLast = idx;
+    document.getElementById('ltQ').textContent = ltQuestions[idx];
+  }
+  document.getElementById('ltShuffle').addEventListener('click', renderLt);
+  renderLt();
+
+  // ===== Roleplay — scene + beats, no script, no chunk given away =====
+  const rpItems = [
+    {
+      tag: 'Scene 1 of 4 · Opening the Meeting',
+      roles: ['You: team lead', 'Mima: colleague'],
+      scene: "You're opening a team meeting. Retention numbers dropped this quarter, and you need to bring it up.",
+      beats: [
+        'Open the meeting and raise the issue',
+        'Mima asks what might be causing it — share a possibility',
+        'Say what you believe the main challenge is',
+        'Mima asks for permission to add a point — respond',
+        'Agree together on what the team needs to consider next',
+      ]
+    },
+    {
+      tag: 'Scene 2 of 4 · Presenting Results',
+      roles: ['You: presenter', 'Mima: manager'],
+      scene: "You're sharing the results of a recent project with your manager.",
+      beats: [
+        'Present the results you have so far',
+        'Mima asks a follow-up question about the numbers',
+        'Explain what the results show',
+        'Mima raises a doubt about the approach',
+        'Defend your point and suggest a next step',
+      ]
+    },
+    {
+      tag: 'Scene 3 of 4 · Disagreeing Politely',
+      roles: ['You: yourself', 'Mima: colleague'],
+      scene: "Mima suggests an idea for the project that you don't fully agree with.",
+      beats: [
+        "Listen to Mima's idea",
+        'Politely disagree and explain why',
+        'Mima asks what you believe should happen instead',
+        'Share your opinion and a possible risk',
+        'Find a middle ground together',
+      ]
+    },
+    {
+      tag: 'Scene 4 of 4 · One Last Point',
+      roles: ['You: yourself', 'Mima: colleague'],
+      scene: 'The meeting is wrapping up, but you want to bring up one more point before everyone leaves.',
+      beats: [
+        'Politely ask for permission to add something',
+        'Mima agrees — share your point',
+        "Mima asks what challenge you're considering",
+        'Explain the main challenge you see',
+        'Close the meeting with a decision',
+      ]
+    },
+  ];
+  let rpi = 0;
+  function renderRp(){
+    const item = rpItems[rpi];
+    document.getElementById('rpTag').textContent = item.tag;
+    document.getElementById('rpRoles').innerHTML = item.roles.map(r => '<span class="rp-role">' + r + '</span>').join('');
+    document.getElementById('rpScene').textContent = item.scene;
+    document.getElementById('rpBeats').innerHTML = item.beats.map((b, i) => '<li>' + (i+1) + '. ' + b + '</li>').join('');
+    document.getElementById('rpCounter').textContent = (rpi+1) + ' / ' + rpItems.length;
+    document.getElementById('rpPrev').disabled = rpi === 0;
+  }
+  document.getElementById('rpPrev').addEventListener('click', () => { if(rpi>0){ rpi--; renderRp(); } });
+  document.getElementById('rpNext').addEventListener('click', () => { rpi = (rpi+1) % rpItems.length; renderRp(); });
+  renderRp();
+</script>
+
+</body>
+</html>
