@@ -67,7 +67,7 @@
   .slide.cover-slide{ overflow:hidden; max-width:none; margin:0; }
   .cover-bg{
     position:absolute; inset:0;
-    background:linear-gradient(100deg, var(--ink) 0%, var(--teal) 100%);
+    background:linear-gradient(100deg, var(--ink) 0%, var(--purple) 100%);
   }
   .cover-body{
     position:relative; z-index:1; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -85,7 +85,6 @@
     letter-spacing:-1px; line-height:0.98; color:#FFF5E8;
   }
   .cover-title span{ display:block; }
-  .cover-sub{ position:relative; z-index:1; font-size:16px; color:rgba(255,245,232,0.78); font-weight:600; margin-top:18px; max-width:560px; }
   @media (max-width:640px){ .cover-title{ font-size:56px; } }
 
   /* ===== Warm-up / Let's Talk carousel ===== */
@@ -227,32 +226,11 @@
       <div class="cover-bg"></div>
       <button class="cover-next-btn" id="coverNextBtn">Next →</button>
       <div class="cover-body">
-        <h1 class="cover-title"><span>Comparatives</span></h1>
-        <p class="cover-sub">Bigger, smaller, better, worse — let's compare everything in English.</p>
+        <h1 class="cover-title"><span>Bigger or</span><span>Better?</span></h1>
       </div>
     </div>
 
-    <!-- SLIDE 2: LET'S TALK -->
-    <div class="slide">
-      <div class="header-bar">
-        <h2>Let's Talk</h2>
-        <p>Answer out loud using a comparative.</p>
-      </div>
-      <div class="wu-wrap">
-        <div class="wu-card">
-          <div class="wu-tag" id="wu-tag">Ready?</div>
-          <div class="wu-q" id="wu-q">Tap to start.</div>
-          <div class="wu-follow" id="wu-follow"></div>
-        </div>
-        <div class="cnav">
-          <button onclick="wuPrev()">← Previous</button>
-          <span class="ccounter" id="wu-counter">— / —</span>
-          <button onclick="wuNext()">Next →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 3: CITIES OF THE WORLD -->
+    <!-- SLIDE 2: CITIES OF THE WORLD -->
     <div class="slide">
       <div class="header-bar">
         <h2>Cities Of The World</h2>
@@ -272,7 +250,7 @@
       </div>
     </div>
 
-    <!-- SLIDE 4: HOME SWEET HOME -->
+    <!-- SLIDE 3: HOME SWEET HOME -->
     <div class="slide">
       <div class="header-bar">
         <h2>Home Sweet Home</h2>
@@ -288,6 +266,26 @@
           <button id="hwPrev">← Previous</button>
           <span class="ccounter" id="hwCounter">1 / 2</span>
           <button id="hwNext">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: LET'S TALK (closing) -->
+    <div class="slide">
+      <div class="header-bar">
+        <h2>Let's Talk</h2>
+        <p>Now it's your turn — answer out loud using a comparative.</p>
+      </div>
+      <div class="wu-wrap">
+        <div class="wu-card">
+          <div class="wu-tag" id="wu-tag">Ready?</div>
+          <div class="wu-q" id="wu-q">Tap to start.</div>
+          <div class="wu-follow" id="wu-follow"></div>
+        </div>
+        <div class="cnav">
+          <button onclick="wuPrev()">← Previous</button>
+          <span class="ccounter" id="wu-counter">— / —</span>
+          <button onclick="wuNext()">Next →</button>
         </div>
       </div>
     </div>
@@ -406,19 +404,19 @@
           <p>Mostra a capa, explica que hoje é sobre Comparatives. Grammar e Vocabulary ficam disponíveis a aula toda — vale abrir o Grammar rapidamente pra relembrar as regras antes de começar.</p>
         </div>
         <div class="tg-block">
-          <span class="time">5–15 min · Let's Talk</span>
-          <h4>Perguntas rápidas</h4>
-          <p>Deixa o aluno responder livremente em voz alta usando um comparativo — não tem resposta certa aqui, o objetivo é ativar o vocabulário e soltar a fala. Corrija de forma leve, sem interromper o raciocínio.</p>
-        </div>
-        <div class="tg-block">
-          <span class="time">15–28 min · Cities Of The World</span>
+          <span class="time">5–18 min · Cities Of The World</span>
           <h4>Compare as cidades</h4>
           <p>Mostra o par de cidades e os adjetivos disponíveis, deixa o aluno criar o máximo de frases possível em voz alta antes de passar pro próximo par. Corrija estrutura (-er / more / irregulares) no final de cada rodada.</p>
         </div>
         <div class="tg-block">
-          <span class="time">28–40 min · Home Sweet Home (fechamento)</span>
+          <span class="time">18–30 min · Home Sweet Home</span>
           <h4>Compare os estilos de vida</h4>
-          <p>Mesma dinâmica, agora comparando jeitos de morar (cidade grande x cidade pequena, praia x montanha). Peça pelo menos 3 frases por par. Feche a aula perguntando qual das opções o aluno prefere e por quê — deixe ele justificar usando comparativos.</p>
+          <p>Mesma dinâmica, agora comparando jeitos de morar (cidade grande x cidade pequena, praia x montanha). Peça pelo menos 3 frases por par.</p>
+        </div>
+        <div class="tg-block">
+          <span class="time">30–40 min · Let's Talk (fechamento)</span>
+          <h4>Conversa livre</h4>
+          <p>Depois de praticar nas duas dinâmicas, o aluno responde livremente em voz alta usando um comparativo — não tem resposta certa aqui, o objetivo é soltar a fala usando tudo que já foi praticado. Corrija de forma leve, sem interromper o raciocínio, e feche perguntando qual resposta ele achou mais interessante.</p>
         </div>
       </div>
     </div>
@@ -498,20 +496,20 @@
 
   // ===== Let's Talk carousel — general everyday comparative questions =====
   const wuQs = [
-    { tag:"Home", q:"Is your hometown bigger or smaller than the city you live in now?", follow:"What's the biggest difference?" },
-    { tag:"Work", q:"Which is more comfortable — working from home or working at an office?", follow:"Why?" },
-    { tag:"Everyday", q:"Is coffee better than tea, in your opinion?", follow:"Which one do you drink more?" },
-    { tag:"Habits", q:"Are mornings more productive than evenings for you?", follow:"When do you work best?" },
-    { tag:"Work", q:"Is your job harder than your last one?", follow:"What makes it harder or easier?" },
-    { tag:"Everyday", q:"Which is more expensive — eating out or cooking at home?", follow:"How much more?" },
-    { tag:"Learning", q:"Is your English better now than it was last year?", follow:"What is easier now?" },
-    { tag:"Habits", q:"Are weekends more relaxing than weekdays for you?", follow:"Is that always true?" },
-    { tag:"Everyday", q:"Which is faster — driving or taking public transport where you live?", follow:"Which do you prefer?" },
-    { tag:"Home", q:"Is winter colder in your country or where you live now?", follow:"What else is different?" },
-    { tag:"Habits", q:"Are short videos more interesting than long ones for you?", follow:"Why?" },
-    { tag:"Learning", q:"Is learning a language harder than learning a new sport?", follow:"Which one takes longer?" },
-    { tag:"Life", q:"Which is more important to you — money or free time?", follow:"Why?" },
-    { tag:"Home", q:"Is your current home bigger than your last one?", follow:"What do you miss about the old one?" },
+    { tag:"Home", q:"Is the city you live in now bigger or smaller than where you grew up?", follow:"What do you miss most about the other place?" },
+    { tag:"Food", q:"Is home-cooked food better than restaurant food, in your opinion?", follow:"What makes the difference?" },
+    { tag:"Work", q:"Is your current job more stressful than your last one?", follow:"What makes it more — or less — stressful?" },
+    { tag:"Tech", q:"Is it easier to learn something new online or from a real teacher?", follow:"Why do you think so?" },
+    { tag:"Weather", q:"Is it hotter or colder where you live now than where you're from?", follow:"Which one do you prefer?" },
+    { tag:"Free Time", q:"Which is more relaxing for you — watching a movie or listening to music?", follow:"What do you usually choose?" },
+    { tag:"Transport", q:"Is it faster to walk or drive to the places you go most often?", follow:"Which one do you usually choose?" },
+    { tag:"Life", q:"Is time more valuable than money for you?", follow:"Why?" },
+    { tag:"Learning", q:"Is speaking English harder than understanding it, for you?", follow:"Which one are you improving faster?" },
+    { tag:"Everyday", q:"Are mornings busier than evenings in your routine?", follow:"What makes them busier?" },
+    { tag:"Home", q:"Is it more comfortable to live alone or with other people?", follow:"What's better about each one?" },
+    { tag:"Entertainment", q:"Are books more interesting than movies, in your opinion?", follow:"Which do you choose more often?" },
+    { tag:"Work", q:"Is working in a team easier than working alone?", follow:"Which do you prefer?" },
+    { tag:"Life", q:"Is life better now than it was five years ago?", follow:"What changed the most?" },
   ];
   let wuIdx = 0;
   function renderWu(){
